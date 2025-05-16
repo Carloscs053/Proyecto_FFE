@@ -64,8 +64,8 @@ public class DaoUsuarioSQL implements DaoUsuario{
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     usuario = new Usuario(
-                            rs.getString("nombre"),
-                            rs.getInt("codigo")
+                            rs.getString("Nombre"),
+                            rs.getInt("Clave")
                     );
                     usuarios.add(usuario);
                 }

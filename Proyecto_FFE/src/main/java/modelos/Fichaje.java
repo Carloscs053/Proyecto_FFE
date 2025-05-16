@@ -4,7 +4,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class Fichaje {
+public class Fichaje implements Comparable<Fichaje>{
 
     private int id;
     private String nombreTrabajador;
@@ -64,5 +64,14 @@ public class Fichaje {
 
     public void setHora(Time hora) {
         this.hora = hora;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    @Override
+    public int compareTo(Fichaje o) {
+        return o.getFecha().compareTo(this.getFecha());
     }
 }

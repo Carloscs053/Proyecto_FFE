@@ -43,7 +43,7 @@ public class DaoFichajeSQL implements DaoFichaje{
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     f = new Fichaje(
-                            rs.getInt("id"),
+                            rs.getInt("ID"),
                             rs.getString("nombreTrabajador"),
                             rs.getInt("codigoTrabajador"),
                             rs.getString("actividad"),
