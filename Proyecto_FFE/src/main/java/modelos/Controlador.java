@@ -1,8 +1,8 @@
 package modelos;
 
 import DAO.DAOManager;
+import DAO.DaoFichaje;
 import DAO.DaoFichajeSQL;
-import DAO.DaoUsuario;
 import DAO.DaoUsuarioSQL;
 
 import java.util.ArrayList;
@@ -24,11 +24,11 @@ public class Controlador {
         this.dao = dao;
     }
 
-    public boolean validaCLave(int clave) {
+    /*public boolean validaCLave(int clave) {
         return clave > 999 && clave < 10000;
-    }
+    }*/
 
-    public Usuario login(int codigo) {
+    public ArrayList<Usuario> getUsuarios() {
         ArrayList<Usuario> usuarios;
         DaoUsuarioSQL daoUsuarioSQL = new DaoUsuarioSQL();
 
@@ -37,8 +37,28 @@ public class Controlador {
             usuarios = daoUsuarioSQL.realAll(dao);
             dao.close();
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException();
         }
+        return usuarios;
+    }
+
+    public ArrayList<Fichaje> getFichajes() {
+        DaoFichaje daoFichajeSQL = new DaoFichajeSQL();
+        ArrayList<Fichaje> fichajes;
+
+        try {
+            dao.open();
+            fichajes = daoFichajeSQL.readAll(dao);
+            dao.close();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+        return fichajes;
+    }
+
+    public Usuario login(int codigo) {
+        ArrayList<Usuario> usuarios = getUsuarios();
 
         for (Usuario u : usuarios) {
             if (codigo == u.getCodigo()) return u;
@@ -50,82 +70,87 @@ public class Controlador {
     // Comprueba si es un admin
     // Admin tendrá como contraseña 1234
     public boolean compruebaAdmin(int codigo) {
-        ArrayList<Usuario> usuarios;
-        DaoUsuarioSQL daoUsuarioSQL = new DaoUsuarioSQL();
+        ArrayList<Usuario> usuarios = getUsuarios();
 
-        try {
-            dao.open();
-            usuarios = daoUsuarioSQL.realAll(dao);
-
-            for (Usuario u : usuarios) {
-                if (u.getCodigo() == 1234 && codigo == u.getCodigo()) return true;
-            }
-        } catch (Exception e) {
-            return false;
+        for (Usuario u : usuarios) {
+            if (u.getCodigo() == 1234 && codigo == u.getCodigo()) return true;
         }
         return false;
-    }
-
-    public ArrayList<Fichaje> recuperaRegistros() {
-        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
-        ArrayList<Fichaje> fichajes = new ArrayList<>();
-
-        try {
-            dao.open();
-            fichajes = daoFichajeSQL.readAll(dao);
-            dao.close();
-        } catch (Exception e) {
-            return fichajes;
-        }
-
-        return fichajes;
     }
 
     public void registraActividad(Usuario uTemp) {
         DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
 
-        if (compruebaUltimaActividad(uTemp.getCodigo()).isEmpty()) return;
-        if (compruebaUltimaActividad(uTemp.getCodigo()).equals("Salida") || primerFichaje(uTemp)) {
-            daoFichajeSQL.insert(uTemp, "Entrada", dao);
-        } else daoFichajeSQL.insert(uTemp, "Salida", dao);
+        if (compruebaUltimaActividad(uTemp.getCodigo()).equals("Salida")|| primerFichaje(uTemp)) {
+            try {
+                dao.open();
+                daoFichajeSQL.insert(uTemp, siguienteId(), "Entrada", dao);
+                dao.close();
+            } catch (Exception e) {
+                return;
+            }
+
+        } else {
+            try {
+                dao.open();
+                daoFichajeSQL.insert(uTemp, siguienteId(),"Salida", dao);
+                dao.close();
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
+
+        }
+    }
+
+    private int siguienteId() {
+        ArrayList<Fichaje> fichajes;
+        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
+
+        try {
+            dao.open();
+            fichajes = daoFichajeSQL.readAll(dao);
+//            dao.close();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+        if (fichajes.isEmpty()) return 1;
+        else {
+            return fichajes.getLast().getId() + 1;
+        }
     }
 
     private boolean primerFichaje(Usuario uTemp) {
-        ArrayList<Fichaje> fichajes;
-        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
+        ArrayList<Fichaje> fichajes = getFichajes();
 
-        try {
-            dao.open();
-            fichajes = daoFichajeSQL.readAll(dao);
-            dao.close();
-        } catch (Exception e) {
-            return false;
-        }
 
         for (Fichaje f : fichajes) {
-            if (uTemp.getCodigo() != f.getCodigoTrabajador()) return true;
+            if (uTemp.getCodigo() == f.getCodigoTrabajador()) return false;
         }
-        return false;
+        return true;
     }
 
     private String compruebaUltimaActividad(int codigo) {
-        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
-        ArrayList<Fichaje> fichajes;
+        ArrayList<Fichaje> fichajes = getFichajes();
 
-        try {
-            dao.open();
-            fichajes = daoFichajeSQL.readAll(dao);
-            dao.close();
-        } catch (Exception e) {
-            return "";
-        }
+//        Fichaje fi = buscaFichajeByCodigo(codigo);
 
-        Collections.sort(fichajes);
+        Collections.reverse(fichajes);
         for (Fichaje f : fichajes) {
             if (f.getCodigoTrabajador() == codigo) return f.getActividad();
         }
         return "";
     }
+
+   /* private Fichaje buscaFichajeByCodigo(int codigo) {
+        Fichaje fTemp;
+        ArrayList<Fichaje> fichajes = getFichajes();
+
+        for (Fichaje f : fichajes) {
+            Collections.reverse(fichajes);
+
+        }
+    }*/
 
     /*// 0  -> Código incorrecto
     // 1 -> Usuario no encontrado

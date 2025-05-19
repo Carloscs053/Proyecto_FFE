@@ -23,26 +23,27 @@ public class Main {
     }
 
     private static void inicio(Controlador c) {
+
         System.out.print("Introduzca el código: ");
         int codigo = Integer.parseInt(S.nextLine());
         Usuario uTemp = c.login(codigo);
 
-        if (!c.validaCLave(codigo)) System.out.println("Código incorrecto.");
+//        if (!c.validaCLave(codigo)) System.out.println("Código incorrecto.");
+        // else {
+        if (uTemp == null) System.out.println("Código incorrecto.");
         else {
-            if (uTemp == null) System.out.println("Usuario no encontrado.");
-            else {
-                c.registraActividad(uTemp);
-                if (c.compruebaAdmin(codigo)) pintaRegistros(c);
-            }
+            c.registraActividad(uTemp);
+            if (c.compruebaAdmin(codigo)) pintaRegistros(c);
         }
+        //  }
     }
 
     private static void pintaRegistros(Controlador c) {
-        ArrayList<Fichaje> fichajes = c.recuperaRegistros();
+        ArrayList<Fichaje> fichajes = c.getFichajes();
 
         for (Fichaje f : fichajes) {
             System.out.println(f.getNombreTrabajador() + " - " + f.getCodigoTrabajador() + " - "
-            + f.getActividad() + " - " + f.getFecha() + " - " + f.getHora());
+                    + f.getActividad() + " - " + f.getFecha() + " - " + f.getHora());
         }
     }
 

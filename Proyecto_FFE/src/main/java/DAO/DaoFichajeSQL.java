@@ -15,16 +15,17 @@ import java.util.ArrayList;
 public class DaoFichajeSQL implements DaoFichaje{
 
     @Override
-    public boolean insert(Usuario usuario, String actividad, DAOManager dao) {
+    public boolean insert(Usuario usuario, int id, String actividad, DAOManager dao) {
         /*INSERT INTO `Fichaje` VALUES (NULL, 'Carlos', '1234', 'Entrada', '2025-05-06', '18:37:00')*/
 
         String sentencia = "INSERT INTO `Fichaje` VALUES ('"
+                + id + "','"
                 + usuario.getNombre() + "','"
                 + usuario.getCodigo() + "','"
-                + LocalDate.now() + "','"
                 + actividad + "','"
                 + LocalDate.now() + "','"
-                + Utils.formateaHora(LocalDateTime.now());
+                + Utils.formateaHora(LocalDateTime.now()) + "');";
+
         try (Statement stmt = dao.getConn().createStatement()) {
             stmt.executeUpdate(sentencia);
             return true;
