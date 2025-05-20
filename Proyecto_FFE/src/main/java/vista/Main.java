@@ -23,19 +23,24 @@ public class Main {
     }
 
     private static void inicio(Controlador c) {
-
         System.out.print("Introduzca el código: ");
         int codigo = Integer.parseInt(S.nextLine());
         Usuario uTemp = c.login(codigo);
+        int actividad;
 
-//        if (!c.validaCLave(codigo)) System.out.println("Código incorrecto.");
-        // else {
+
         if (uTemp == null) System.out.println("Código incorrecto.");
         else {
-            c.registraActividad(uTemp);
+            actividad = c.registraActividad(uTemp);
+            // -1 error
+            // 0 Entrada
+            // 1 Salida
+            if (actividad == 0) System.out.println("Fichaje de entrada\n");
+            else if (actividad == 1) System.out.println("Fichaje de salida\n");
+            else System.out.println("Ha ocurrido un error\n");
+
             if (c.compruebaAdmin(codigo)) pintaRegistros(c);
         }
-        //  }
     }
 
     private static void pintaRegistros(Controlador c) {

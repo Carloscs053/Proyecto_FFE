@@ -78,7 +78,11 @@ public class Controlador {
         return false;
     }
 
-    public void registraActividad(Usuario uTemp) {
+
+    // -1 error
+    // 0 Entrada
+    // 1 Salida
+    public int registraActividad(Usuario uTemp) {
         DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
 
         if (compruebaUltimaActividad(uTemp.getCodigo()).equals("Salida")|| primerFichaje(uTemp)) {
@@ -86,8 +90,9 @@ public class Controlador {
                 dao.open();
                 daoFichajeSQL.insert(uTemp, siguienteId(), "Entrada", dao);
                 dao.close();
+                return 0;
             } catch (Exception e) {
-                return;
+                return -1;
             }
 
         } else {
@@ -95,10 +100,10 @@ public class Controlador {
                 dao.open();
                 daoFichajeSQL.insert(uTemp, siguienteId(),"Salida", dao);
                 dao.close();
+                return 1;
             } catch (Exception e) {
-                throw new RuntimeException();
+                return -1;
             }
-
         }
     }
 
