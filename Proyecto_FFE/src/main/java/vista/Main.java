@@ -1,6 +1,5 @@
 package vista;
 
-import DAO.DAOManager;
 import modelos.Controlador;
 import modelos.Fichaje;
 import modelos.Usuario;

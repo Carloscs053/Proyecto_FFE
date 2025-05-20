@@ -1,9 +1,5 @@
 package modelos;
 
-import DAO.DaoUsuarioSQL;
-
-import java.util.ArrayList;
-
 public class Usuario {
 
     private String nombre;
