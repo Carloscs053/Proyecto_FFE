@@ -31,15 +31,17 @@ public class Main {
 
         if (uTemp == null) System.out.println("Código incorrecto.");
         else {
-            // -1 error
-            // 0 Entrada
-            // 1 Salida
-            actividad = c.registraActividad(uTemp);
-            if (actividad == 0) System.out.println("Fichaje de entrada\n");
-            else if (actividad == 1) System.out.println("Fichaje de salida\n");
-            else System.out.println("Ha ocurrido un error\n");
-
             if (c.compruebaAdmin(codigo)) pintaRegistros(c);
+            else {
+                // -1 error
+                // 0 Entrada
+                // 1 Salida
+                actividad = c.registraActividad(uTemp);
+                if (actividad == 0) System.out.println("Fichaje de entrada\n");
+                else if (actividad == 1) System.out.println("Fichaje de salida\n");
+                else System.out.println("Ha ocurrido un error\n");
+            }
+
         }
     }
 
@@ -47,10 +49,12 @@ public class Main {
     private static void pintaRegistros(Controlador c) {
         ArrayList<Fichaje> fichajes = c.getFichajes();
 
+        System.out.println();
         for (Fichaje f : fichajes) {
             System.out.println(f.getNombreTrabajador() + " - " + f.getCodigoTrabajador() + " - "
                     + f.getActividad() + " - " + f.getFecha() + " - " + f.getHora());
         }
+        System.out.println();
     }
 
 
