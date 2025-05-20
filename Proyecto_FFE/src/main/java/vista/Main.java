@@ -22,6 +22,7 @@ public class Main {
 
     }
 
+    // Es toda la actividad de la app
     private static void inicio(Controlador c) {
         System.out.print("Introduzca el código: ");
         int codigo = Integer.parseInt(S.nextLine());
@@ -31,10 +32,10 @@ public class Main {
 
         if (uTemp == null) System.out.println("Código incorrecto.");
         else {
-            actividad = c.registraActividad(uTemp);
             // -1 error
             // 0 Entrada
             // 1 Salida
+            actividad = c.registraActividad(uTemp);
             if (actividad == 0) System.out.println("Fichaje de entrada\n");
             else if (actividad == 1) System.out.println("Fichaje de salida\n");
             else System.out.println("Ha ocurrido un error\n");
@@ -43,6 +44,7 @@ public class Main {
         }
     }
 
+    // Pinta los registros al administrador
     private static void pintaRegistros(Controlador c) {
         ArrayList<Fichaje> fichajes = c.getFichajes();
 
@@ -53,9 +55,4 @@ public class Main {
     }
 
 
-    // 0  -> Código incorrecto
-    // 1 -> Usuario no encontrado
-    // 2 -> Error de conexión
-    // 3 -> Usuario correcto
-    // 4 -> Usuario administrador
 }

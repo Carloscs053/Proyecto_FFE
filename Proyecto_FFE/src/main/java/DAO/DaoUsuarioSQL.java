@@ -9,49 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class DaoUsuarioSQL implements DaoUsuario{
-    @Override
-    public boolean insert(Usuario usuario, DAOManager dao) {
-        /*INSERT INTO `Usuario` VALUES ('', '')*/
-
-        String sentencia = "INSERT INTO `Usuario` VALUES ('"
-                + usuario.getNombre() + "','"
-                + usuario.getCodigo() + "');";
-
-        try (Statement stmt = dao.getConn().createStatement()) {
-            stmt.executeUpdate(sentencia);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean update(Usuario usuario, DAOManager dao) {
-        String sentencia = "UPDATE `Usuario` SET "
-                + usuario.getNombre() + "','"
-                + usuario.getCodigo() + "')"
-                + "WHERE `Usuario`.`codigo` = " + usuario.getCodigo();
-
-        try (Statement stmt = dao.getConn().createStatement()) {
-            stmt.executeUpdate(sentencia);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean delete(Usuario usuario, DAOManager dao) {
-        String sentencia = "DELETE FROM `Usuario` "
-                + "WHERE `Usuario`.`codigo` = "
-                + usuario.getCodigo();
-        try (Statement stmt = dao.getConn().createStatement()) {
-            stmt.executeUpdate(sentencia);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     @Override
     public ArrayList<Usuario> realAll(DAOManager dao) {

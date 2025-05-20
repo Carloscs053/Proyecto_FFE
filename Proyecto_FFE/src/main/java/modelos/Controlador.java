@@ -24,12 +24,12 @@ public class Controlador {
         this.dao = dao;
     }
 
-    /*public boolean validaCLave(int clave) {
-        return clave > 999 && clave < 10000;
-    }*/
 
+    // Métodos del controlador
+
+    // DHace una petición a la BBDD y devuelve un ArrayList con todos los usuarios
     public ArrayList<Usuario> getUsuarios() {
-        ArrayList<Usuario> usuarios;
+        ArrayList<Usuario> usuarios = new ArrayList<>();
         DaoUsuarioSQL daoUsuarioSQL = new DaoUsuarioSQL();
 
         try {
@@ -37,26 +37,28 @@ public class Controlador {
             usuarios = daoUsuarioSQL.realAll(dao);
             dao.close();
         } catch (Exception e) {
-            throw new RuntimeException();
+            return usuarios;
         }
         return usuarios;
     }
 
+    // Consulta los fichajes en la BBDD y devuelve un ArrayList con todos
     public ArrayList<Fichaje> getFichajes() {
         DaoFichaje daoFichajeSQL = new DaoFichajeSQL();
-        ArrayList<Fichaje> fichajes;
+        ArrayList<Fichaje> fichajes = new ArrayList<>();
 
         try {
             dao.open();
             fichajes = daoFichajeSQL.readAll(dao);
             dao.close();
         } catch (Exception e) {
-            throw new RuntimeException();
+            return fichajes;
         }
 
         return fichajes;
     }
 
+    // Comprueba si existe el usuario en la BBDD
     public Usuario login(int codigo) {
         ArrayList<Usuario> usuarios = getUsuarios();
 
@@ -75,38 +77,54 @@ public class Controlador {
         for (Usuario u : usuarios) {
             if (u.getCodigo() == 1234 && codigo == u.getCodigo()) return true;
         }
+
         return false;
     }
 
 
+    // Registra la actividad en la BBDD
+    // Devuelve int para dar feedback al front con las siguientes indicaciones:
     // -1 error
     // 0 Entrada
     // 1 Salida
     public int registraActividad(Usuario uTemp) {
-        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
-
+        // Comprueba si es la primera interacción o en caso contrario comprueba la última actividad
         if (compruebaUltimaActividad(uTemp.getCodigo()).equals("Salida")|| primerFichaje(uTemp)) {
-            try {
-                dao.open();
-                daoFichajeSQL.insert(uTemp, siguienteId(), "Entrada", dao);
-                dao.close();
-                return 0;
-            } catch (Exception e) {
-                return -1;
-            }
-
+            return fichajeEntrada(uTemp);
         } else {
-            try {
-                dao.open();
-                daoFichajeSQL.insert(uTemp, siguienteId(),"Salida", dao);
-                dao.close();
-                return 1;
-            } catch (Exception e) {
-                return -1;
-            }
+            return fichajeSalida(uTemp);
         }
     }
 
+    // Registra la actividad de entrada
+    private int fichajeEntrada(Usuario uTemp) {
+        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
+
+        try {
+            dao.open();
+            daoFichajeSQL.insert(uTemp, siguienteId(), "Entrada", dao);
+            dao.close();
+            return 0;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // Registra la actividad de salida
+    private int fichajeSalida(Usuario uTemp) {
+        DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
+
+        try {
+            dao.open();
+            daoFichajeSQL.insert(uTemp, siguienteId(),"Salida", dao);
+            dao.close();
+            return 1;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // Para mantener la integridad de la BBDD, coge la id del último registro de la tabla y le suma 1
     private int siguienteId() {
         ArrayList<Fichaje> fichajes;
         DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
@@ -114,9 +132,10 @@ public class Controlador {
         try {
             dao.open();
             fichajes = daoFichajeSQL.readAll(dao);
-//            dao.close();
+            // No cierra la conexión porque a este método se le llama por parámetro en otra consulta
+            // y entra en conflicto
         } catch (Exception e) {
-            throw new RuntimeException();
+            return -1;
         }
 
         if (fichajes.isEmpty()) return 1;
@@ -125,108 +144,32 @@ public class Controlador {
         }
     }
 
+    // Comprueba si es la primera vez que ha fichado
     private boolean primerFichaje(Usuario uTemp) {
         ArrayList<Fichaje> fichajes = getFichajes();
 
 
         for (Fichaje f : fichajes) {
+            // Si el código del usuario coincide con el de los fichajes, no es la primera vez que ficha
             if (uTemp.getCodigo() == f.getCodigoTrabajador()) return false;
         }
+
+        // De lo contrario, nunca ha fichado
         return true;
     }
 
+    // Comprueba la última actividad del usuario
     private String compruebaUltimaActividad(int codigo) {
         ArrayList<Fichaje> fichajes = getFichajes();
 
-//        Fichaje fi = buscaFichajeByCodigo(codigo);
-
+        // Como los registros se guardan en la última posición y el bucle comprueba desde el primero,
+        // le doy la vuelta al array y miro el primer registro del usuario
         Collections.reverse(fichajes);
+
         for (Fichaje f : fichajes) {
             if (f.getCodigoTrabajador() == codigo) return f.getActividad();
         }
         return "";
     }
-
-   /* private Fichaje buscaFichajeByCodigo(int codigo) {
-        Fichaje fTemp;
-        ArrayList<Fichaje> fichajes = getFichajes();
-
-        for (Fichaje f : fichajes) {
-            Collections.reverse(fichajes);
-
-        }
-    }*/
-
-    /*// 0  -> Código incorrecto
-    // 1 -> Usuario no encontrado
-    // 2 -> Error de conexión
-    // 3 -> Usuario correcto
-    // 4 -> Usuario administrador
-    public int entrada(int codigo) {
-        if (!validaCLave(codigo)) return 0;
-        else {
-            ArrayList<Usuario> usuarios;
-            DaoUsuarioSQL daoUsuarioSQL = new DaoUsuarioSQL();
-            try {
-                dao.open();
-                usuarios = daoUsuarioSQL.realAll(dao);
-                dao.close();
-            } catch (Exception e) {
-                return 2;
-            }
-
-            for (Usuario u : usuarios) {
-                if (codigo == u.getCodigo()) {
-                    DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
-                    try {
-                        dao.open();
-                        daoFichajeSQL.insert(u, "Entrada", dao);
-                        dao.close();
-                        if (u.getCodigo() == 1234) return 4;
-                        else return 3;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                }
-            }
-            return 1;
-        }
-    }
-
-    // 0  -> Código incorrecto
-    // 1 -> Usuario no encontrado
-    // 2 -> Error de conexión
-    // 3 -> Usuario correcto
-    // 4 -> Usuario administrador
-    public int salida(int codigo) {
-        if (!validaCLave(codigo)) return false;
-        else {
-            ArrayList<Usuario> usuarios;
-            DaoUsuarioSQL daoUsuarioSQL = new DaoUsuarioSQL();
-            DaoFichajeSQL daoFichajeSQL = new DaoFichajeSQL();
-
-            try {
-                dao.open();
-                usuarios = daoUsuarioSQL.realAll(dao);
-                dao.close();
-            } catch (Exception e) {
-                return false;
-            }
-
-            for (Usuario u : usuarios) {
-                if (codigo == u.getCodigo()) {
-                    try {
-                        dao.open();
-                        daoFichajeSQL.insert(u, "Salida", dao);
-                        dao.close();
-                    } catch (Exception e) {
-                        return false;
-                    }
-                }
-            }
-            return 1;
-        }
-    }*/
-
 
 }
