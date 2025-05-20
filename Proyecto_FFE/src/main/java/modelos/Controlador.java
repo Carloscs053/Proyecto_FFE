@@ -88,8 +88,10 @@ public class Controlador {
     // 0 Entrada
     // 1 Salida
     public int registraActividad(Usuario uTemp) {
+        String actividad = compruebaUltimaActividad(uTemp.getCodigo())/*.equals("Salida")*/;
+
         // Comprueba si es la primera interacción o en caso contrario comprueba la última actividad
-        if (compruebaUltimaActividad(uTemp.getCodigo()).equals("Salida")|| primerFichaje(uTemp)) {
+        if (uTemp != null && (actividad.equals("Salida")|| primerFichaje(uTemp))) {
             return fichajeEntrada(uTemp);
         } else {
             return fichajeSalida(uTemp);
@@ -151,7 +153,7 @@ public class Controlador {
 
         for (Fichaje f : fichajes) {
             // Si el código del usuario coincide con el de los fichajes, no es la primera vez que ficha
-            if (uTemp.getCodigo() == f.getCodigoTrabajador()) return false;
+            if (uTemp != null && uTemp.getCodigo() == f.getCodigoTrabajador()) return false;
         }
 
         // De lo contrario, nunca ha fichado

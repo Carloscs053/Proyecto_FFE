@@ -71,6 +71,12 @@ public class Fichaje implements Comparable<Fichaje>{
     }
 
     @Override
+    public String toString() {
+        return getNombreTrabajador() + " - " + getCodigoTrabajador() + " - "
+                + getActividad() + " - " + getFecha() + " - " + getHora();
+    }
+
+    @Override
     public int compareTo(Fichaje o) {
         return o.getFecha().compareTo(this.getFecha());
     }
