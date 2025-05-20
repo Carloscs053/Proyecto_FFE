@@ -34,7 +34,6 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Opción 1: crear toda la interfaz desde Java:
         stage.setTitle("I.E.S. Fernando III - Entrada Principal");
 
 
@@ -217,13 +216,6 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(root, 350, 150);
         stage.setScene(scene);
         stage.show();
-
-        // Opción 2: utilizando plantillas FXML (Recomendable)
-        /*FXMLLoader fxmlLoader = new FXMLLoader(org.example.tallerjavafx.HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();*/
     }
 
     private void updateClock(Label clockLabel) {
