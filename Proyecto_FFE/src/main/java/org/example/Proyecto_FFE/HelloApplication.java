@@ -158,12 +158,17 @@ public class HelloApplication extends Application {
             try {
                 int pin = Integer.parseInt(pinIntup.toString());
                 Usuario uTemp = c.login(pin);
-                int mensaje;
+                int mensaje = -1;
 
                 if (!c.compruebaAdmin(pin)) {
 
                     areaRegistros.setVisible(false);
-                    mensaje = c.registraActividad(uTemp);
+                    if (uTemp == null) {
+                        feedBackLabel.setText("Código incorrecto.");
+                        feedBackLabel.setVisible(true);
+                        feedBackLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: red;");
+                    } else mensaje = c.registraActividad(uTemp);
+
 
                     switch (mensaje) {
                         case -1:
@@ -180,6 +185,11 @@ public class HelloApplication extends Application {
                             feedBackLabel.setText("Fichaje de Salida.");
                             feedBackLabel.setVisible(true);
                             feedBackLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: green;");
+                            break;
+                        default:
+                            feedBackLabel.setText("Código incorrecto.");
+                            feedBackLabel.setVisible(true);
+                            feedBackLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: red;");
                             break;
                     }
                 } else {
