@@ -9,6 +9,8 @@ Realizado por Carlos Cañada Sánchez
 - DESCARGA DEL PROYECTO
 - MANUAL DE USUARIO
 
+ENLACE AL VIDEO EXPLICATIVO:
+https://youtu.be/1OnIXJ5Aggw
 
 
 # INTRODUCCIÓN 🤵‍♂️
@@ -115,5 +117,7 @@ Nombre del trabajador - Código del trabajador - Actividad - Fecha - Hora
 ![image](https://github.com/user-attachments/assets/533b7309-7ac0-42a8-a5a5-f7559dbac24a)
 
 Y con eso concluiría la actividad de la aplicación.
+
+Les vuelvo a dejar el enlace al video explicativo a continuación: https://youtu.be/1OnIXJ5Aggw
 
 Espero que haya sido de su agrado :)
